@@ -1,5 +1,6 @@
 const express = require("express");
 const { validateRequest } = require("./facility.middleware");
+const { protect } = require("../auth/auth.middleware");
 const {
   createFacilitySchema,
   updateFacilitySchema,
@@ -19,7 +20,7 @@ const router = express.Router();
 router
   .route("/facilities")
   .get(getFacilities)
-  .post(validateRequest(createFacilitySchema), createFacility);
+  .post(protect, validateRequest(createFacilitySchema), createFacility);
 
 // GET    /facilities/:id → Public: view details
 // PUT    /facilities/:id → Private: update a facility (owner only)
@@ -27,7 +28,7 @@ router
 router
   .route("/facilities/:id")
   .get(getFacility)
-  .put(validateRequest(updateFacilitySchema), updateFacility)
-  .delete(deleteFacility);
+  .put(protect, validateRequest(updateFacilitySchema), updateFacility)
+  .delete(protect, deleteFacility);
 
 module.exports = router;
