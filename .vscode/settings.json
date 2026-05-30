@@ -1,0 +1,20 @@
+{
+  // Theme
+  "workbench.iconTheme": "vscode-icons",
+
+  // General Formatting
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+
+  // Prettier
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // ESLint
+  "eslint.alwaysShowStatus": true,
+
+  // Auto Fixes
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always",
+    "source.organizeImports": "always"
+  }
+}
