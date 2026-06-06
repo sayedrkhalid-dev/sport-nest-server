@@ -2,13 +2,12 @@ const Facility = require("./facility.model");
 
 // Retrieve active facilities with optional filters
 const getAllFacilities = async (filters = {}) => {
-  const query = { is_active: true, ...filters };
-  return await Facility.find(query).sort({ createdAt: -1 });
+  return await Facility.find(filters).sort({ createdAt: -1 });
 };
 
 // Retrieve a single facility by ID
 const getFacilityById = async (id) => {
-  return await Facility.findOne({ _id: id, is_active: true });
+  return await Facility.findOne({ _id: id });
 };
 
 // Create a new facility
@@ -22,7 +21,7 @@ const updateFacility = async (id, data) => {
   return await Facility.findByIdAndUpdate(
     id,
     { $set: data },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   );
 };
 
@@ -31,7 +30,7 @@ const deleteFacility = async (id) => {
   return await Facility.findByIdAndUpdate(
     id,
     { $set: { is_active: false } },
-    { new: true }
+    { new: true },
   );
 };
 

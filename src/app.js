@@ -2,6 +2,10 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const routes = require("./routes");
+const {
+  errorHandler,
+  notFoundHandler,
+} = require("./modules/facility/facility.middleware");
 
 // Module scaffolding
 const app = express();
@@ -25,5 +29,11 @@ app.get("/", (req, res) => {
 
 // Application Routes
 app.use("/", routes);
+
+// 404 Not Found Handler
+app.use(notFoundHandler);
+
+// Global Error Handler
+app.use(errorHandler);
 
 module.exports = app;

@@ -7,28 +7,28 @@ const isValidId = (id) => mongoose.isValidObjectId(id);
 // ─── GET /facilities ──────────────────────────────────────────────────────────
 const getFacilities = async (req, res, next) => {
   try {
-    const { search, facility_type, location } = req.query;
-    const filters = {};
+    // const { search, facility_type, location } = req.query;
+    // const filters = {};
 
-    // Search by facility name using $regex
-    if (search) {
-      filters.name = { $regex: search, $options: "i" };
-    }
+    // // Search by facility name using $regex
+    // if (search) {
+    //   filters.name = { $regex: search, $options: "i" };
+    // }
 
-    // Filter by sport type using $in
-    if (facility_type) {
-      const types = facility_type
-        .split(",")
-        .map((t) => t.trim().toLowerCase());
-      filters.facility_type = { $in: types };
-    }
+    // // Filter by sport type using $in
+    // if (facility_type) {
+    //   const types = facility_type
+    //     .split(",")
+    //     .map((t) => t.trim().toLowerCase());
+    //   filters.facility_type = { $in: types };
+    // }
 
-    // Location search
-    if (location) {
-      filters.location = { $regex: location, $options: "i" };
-    }
+    // // Location search
+    // if (location) {
+    //   filters.location = { $regex: location, $options: "i" };
+    // }
 
-    const facilities = await facilityService.getAllFacilities(filters);
+    const facilities = await facilityService.getAllFacilities();
 
     res.status(200).json({
       success: true,
@@ -115,7 +115,10 @@ const updateFacility = async (req, res, next) => {
       });
     }
 
-    const updated = await facilityService.updateFacility(req.params.id, req.body);
+    const updated = await facilityService.updateFacility(
+      req.params.id,
+      req.body,
+    );
 
     res.status(200).json({
       success: true,

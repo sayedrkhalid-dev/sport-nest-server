@@ -12,6 +12,7 @@ const slotSchema = new Schema(
         "Start time must be in HH:MM format!",
       ],
     },
+
     end_time: {
       type: String,
       required: [true, "End time is required!"],
@@ -19,6 +20,12 @@ const slotSchema = new Schema(
         /^([01]\d|2[0-3]):([0-5]\d)$/,
         "End time must be in HH:MM format!",
       ],
+      validate: {
+        validator: function (value) {
+          return value > this.start_time;
+        },
+        message: "End time must be later than start time!",
+      },
     },
   },
   { _id: false },
@@ -56,6 +63,12 @@ const facilitySchema = new Schema(
       type: String,
       required: [true, "Image URL is required!"],
       trim: true,
+      validate: {
+        validator: function (value) {
+          return /^https?:\/\/.+/i.test(value);
+        },
+        message: "Please provide a valid image URL!",
+      },
     },
 
     location: {
@@ -63,6 +76,7 @@ const facilitySchema = new Schema(
       required: [true, "Location is required!"],
       trim: true,
       minlength: [2, "Location must be at least 2 characters!"],
+      maxlength: [200, "Location cannot exceed 200 characters!"],
     },
 
     price_per_hour: {
@@ -95,7 +109,10 @@ const facilitySchema = new Schema(
       required: [true, "Owner email is required!"],
       lowercase: true,
       trim: true,
-      match: [/^\S+@\S+\.\S+$/, "Please provide a valid email address!"],
+      match: [
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        "Please provide a valid email address!",
+      ],
     },
 
     booking_count: {
@@ -111,9 +128,8 @@ const facilitySchema = new Schema(
   },
   {
     timestamps: true,
+    versionKey: false,
   },
 );
 
-const Facility = mongoose.model("Facility", facilitySchema);
-
-module.exports = Facility;
+module.exports = mongoose.model("Facility", facilitySchema);
