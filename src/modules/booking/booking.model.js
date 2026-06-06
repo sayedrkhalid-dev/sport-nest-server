@@ -62,7 +62,10 @@ const bookingSchema = new Schema(
 // Compound index to prevent double bookings on the exact same slot
 bookingSchema.index(
   { facility_id: 1, booking_date: 1, "time_slot.start_time": 1, "time_slot.end_time": 1 },
-  { unique: true }
+  {
+    unique: true,
+    partialFilterExpression: { status: { $ne: "cancelled" } },
+  }
 );
 
 const Booking = mongoose.model("Booking", bookingSchema);
