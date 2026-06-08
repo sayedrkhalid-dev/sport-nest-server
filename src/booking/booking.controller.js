@@ -35,7 +35,7 @@ const createBooking = async (req, res) => {
 
     const booking = await Booking.create({
       facility_id,
-      user_email: req.user.email,
+      owner_email: req.user.email,
       booking_date,
       time_slot,
       hours,
