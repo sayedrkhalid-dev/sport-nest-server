@@ -1,7 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const { toNodeHandler } = require("better-auth/node");
-const { auth } = require("./auth");
 const facilityRoutes = require("./facility/facility.routes");
 const bookingRoutes = require("./booking/booking.routes");
 
@@ -11,9 +9,6 @@ app.use(cors({
   origin: process.env.FRONTEND_URL,
   credentials: true,
 }));
-
-// ✅ Must be before express.json()
-app.all("/api/auth/*", toNodeHandler(auth));
 
 app.use(express.json());
 

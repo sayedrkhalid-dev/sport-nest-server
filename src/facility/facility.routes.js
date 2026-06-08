@@ -1,5 +1,4 @@
 const express = require("express");
-const protect = require("../middleware/protect");
 const {
   getFacilities,
   getFacility,
@@ -12,8 +11,8 @@ const router = express.Router();
 
 router.get("/facilities", getFacilities);
 router.get("/facilities/:id", getFacility);
-router.post("/facilities", protect, createFacility);
-router.put("/facilities/:id", protect, updateFacility);
-router.delete("/facilities/:id", protect, deleteFacility);
+router.post("/facilities", createFacility);
+router.put("/facilities/:id", updateFacility);
+router.delete("/facilities/:id", deleteFacility);
 
 module.exports = router;
