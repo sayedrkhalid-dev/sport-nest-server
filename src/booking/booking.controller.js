@@ -1,21 +1,21 @@
 const Booking = require("./booking.model");
 const Facility = require("../facility/facility.model");
 
-// POST /bookings — private
+// POST /bookings
 const createBooking = async (req, res) => {
   try {
-    const { facility_id, booking_date, time_slot } = req.body;
+    const { facility_id, booking_date, time_slot, owner_email } = req.body;
+
+    if (!owner_email) return res.status(400).json({ message: "owner_email is required" });
 
     const facility = await Facility.findById(facility_id);
     if (!facility) return res.status(404).json({ message: "Facility not found" });
 
-    // slot available কিনা check করো
     const slotExists = facility.available_slots.some(
       (s) => s.start_time === time_slot.start_time && s.end_time === time_slot.end_time
     );
     if (!slotExists) return res.status(400).json({ message: "Slot not available" });
 
-    // already booked কিনা check করো
     const existing = await Booking.findOne({
       facility_id,
       booking_date,
@@ -25,7 +25,6 @@ const createBooking = async (req, res) => {
     });
     if (existing) return res.status(409).json({ message: "Slot already booked" });
 
-    // hours ও total_price calculate করো
     const toMin = (t) => {
       const [h, m] = t.split(":").map(Number);
       return h * 60 + m;
@@ -35,7 +34,7 @@ const createBooking = async (req, res) => {
 
     const booking = await Booking.create({
       facility_id,
-      owner_email: req.user.email,
+      owner_email,
       booking_date,
       time_slot,
       hours,
@@ -43,7 +42,6 @@ const createBooking = async (req, res) => {
       status: "pending",
     });
 
-    // booking_count বাড়াও
     await Facility.findByIdAndUpdate(facility_id, { $inc: { booking_count: 1 } });
 
     const populated = await booking.populate("facility_id", "name location image");
@@ -53,10 +51,13 @@ const createBooking = async (req, res) => {
   }
 };
 
-// GET /bookings/my — private
+// GET /bookings/my
 const getMyBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find({ owner_email: req.user.email })
+    const { email } = req.query;
+    if (!email) return res.status(400).json({ message: "email is required" });
+
+    const bookings = await Booking.find({ owner_email: email })
       .populate("facility_id", "name location image facility_type")
       .sort({ createdAt: -1 });
     res.json({ success: true, data: bookings });
@@ -65,12 +66,15 @@ const getMyBookings = async (req, res) => {
   }
 };
 
-// PATCH /bookings/:id/cancel — private
+// PATCH /bookings/:id/cancel
 const cancelBooking = async (req, res) => {
   try {
+    const { owner_email } = req.body;
+    if (!owner_email) return res.status(400).json({ message: "owner_email is required" });
+
     const booking = await Booking.findOne({
       _id: req.params.id,
-      user_email: req.user.email,
+      owner_email,
     });
 
     if (!booking) return res.status(404).json({ message: "Booking not found" });
