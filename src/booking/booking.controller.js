@@ -54,10 +54,10 @@ const createBooking = async (req, res) => {
 // GET /bookings/my
 const getMyBookings = async (req, res) => {
   try {
-    const { email } = req.query;
-    if (!email) return res.status(400).json({ message: "email is required" });
+    const { owner_email } = req.query;
+    if (!owner_email) return res.status(400).json({ message: "email is required" });
 
-    const bookings = await Booking.find({ owner_email: email })
+    const bookings = await Booking.find({ owner_email })
       .populate("facility_id", "name location image facility_type")
       .sort({ createdAt: -1 });
     res.json({ success: true, data: bookings });
