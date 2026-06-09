@@ -54,7 +54,16 @@ const createBooking = async (req, res) => {
 };
 
 // GET /bookings/my — private
-export const getMyBookings = () => fetcher("/bookings/my");
+const getMyBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find({ owner_email: req.user.email })
+      .populate("facility_id", "name location image facility_type")
+      .sort({ createdAt: -1 });
+    res.json({ success: true, data: bookings });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
 // PATCH /bookings/:id/cancel — private
 const cancelBooking = async (req, res) => {
